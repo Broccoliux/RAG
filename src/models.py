@@ -22,3 +22,8 @@ class Citation(BaseModel):
     source: str
     chunk_id: str
     page: int | None = None
+
+class Answer(BaseModel):
+    question: str
+    content: str
+    citations: list[Citation] = Field(default_factory=list)
