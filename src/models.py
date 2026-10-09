@@ -16,3 +16,9 @@ class Chunk(BaseModel):
 class RetrievalResult(BaseModel):
     chunk: Chunk
     score: float
+
+class Citation(BaseModel):
+    document_id: str
+    source: str
+    chunk_id: str
+    page: int | None = None
