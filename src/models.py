@@ -12,3 +12,7 @@ class Chunk(BaseModel):
     document_id: str
     content: str
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+class RetrievalResult(BaseModel):
+    chunk: Chunk
+    score: float
