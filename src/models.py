@@ -23,6 +23,8 @@ class Citation(BaseModel):
     chunk_id: str
     page: int | None = None
 
+
+
 class Answer(BaseModel):
     question: str
     content: str
