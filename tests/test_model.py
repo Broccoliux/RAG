@@ -174,3 +174,20 @@ def test_chunker_rejects_invalid_settings(chunk_size, chunk_overlap):
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
         )
+
+def test_chunker_offsets_match_original_text():
+    content = " ".join(f"unique_word_{i}" for i in range(2000))
+    doc = Document(
+        id="offset-doc",
+        content=content,
+        source="offset.txt",
+    )
+
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
+
+    for chunk in chunks:
+        start = chunk.metadata["start_index"]
+        assert start >= 0
+        assert content[start : start + len(chunk.content)] == chunk.content
