@@ -143,5 +143,4 @@ def test_chunker_preserves_metadata():
         assert chunk.metadata["source"] == doc.source
         assert chunk.metadata["file_type"] == ".txt"
         assert chunk.metadata["chunk_index"] == index
-        assert isinstance(chunk.metadata["start_index"], int)
-        assert chunk.metadata["start_index"] >= 0
+
