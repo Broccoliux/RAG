@@ -149,3 +149,28 @@ def test_chunker_preserves_metadata():
         assert chunk.metadata["source"] == doc.source
         assert chunk.metadata["file_type"] == ".txt"
         assert chunk.metadata["chunk_index"] == index
+
+
+
+@pytest.mark.parametrize(
+    ("chunk_size", "chunk_overlap"),
+    [
+        (0, 0),
+        (-1, 0),
+        (100, -1),
+        (100, 100),
+        (100, 120),
+    ],
+)
+def test_chunker_rejects_invalid_settings(chunk_size, chunk_overlap):
+    doc = Document(
+        id="invalid-doc",
+        content="Some example text.",
+        source="example.txt",
+    )
+    with pytest.raises(ValueError):
+        chunk_document(
+            doc,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+        )
