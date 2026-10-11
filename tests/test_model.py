@@ -1,16 +1,17 @@
 from src.models import Document, Chunk, RetrievalResult, Citation, Answer
 
-def test_document_model():
+
+def test_document_defaults():
     doc = Document(
         id="doc-1",
-        content=" Hello RAG",
+        content="Hello RAG",
         source="notes.md",
     )
     assert doc.metadata == {}
 
 
 def test_chunk_links_to_document():
-   chunk = Chunk(
+    chunk = Chunk(
         id="chunk-1",
         document_id="doc-1",
         content="Hello RAG",
@@ -27,6 +28,7 @@ def test_retrieval_result_stores_score():
     result = RetrievalResult(chunk=chunk, score=0.9)
     assert result.score == 0.9
 
+
 def test_citation_stores_page():
     citation = Citation(
         document_id="doc-1",
@@ -35,3 +37,11 @@ def test_citation_stores_page():
         page=3,
     )
     assert citation.page == 3
+
+
+def test_answer_defaults_to_empty_citations():
+    answer = Answer(
+        question="What is RAG?",
+        content="RAG retrieves relevant information.",
+    )
+    assert answer.citations == []
