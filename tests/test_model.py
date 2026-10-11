@@ -10,3 +10,9 @@ def test_document_model():
 
 
 def test_chunk_links_to_document():
+   chunk = Chunk(
+        id="chunk-1",
+        document_id="doc-1",
+        content="Hello RAG",
+    )
+    assert chunk.document_id == "doc-1"
