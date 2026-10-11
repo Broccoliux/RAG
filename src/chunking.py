@@ -8,6 +8,16 @@ def chunk_document(
     chunk_size: int = 400,
     chunk_overlap: int = 60,
 ) -> list[Chunk]:
+
+    if chunk_size <= 0:
+          raise ValueError("chunk_size must be greater than 0")
+
+    if chunk_overlap < 0:
+          raise ValueError("chunk_overlap cannot be negative")
+
+    if chunk_overlap >= chunk_size:
+          raise ValueError("chunk_overlap must be smaller than chunk_size")
+
     splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         encoding_name="cl100k_base",
         chunk_size=chunk_size,
