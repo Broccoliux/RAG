@@ -12,8 +12,9 @@ def chunk_document(
         encoding_name="cl100k_base",
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-        separators=["\n\n", "\n", ". ", " ", ""],
+        separators=["\n\n", "\n", " ", ""],
         add_start_index=True,
+        strip_whitespace=False,
     )
 
     split_documents = splitter.create_documents(
