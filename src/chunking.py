@@ -13,7 +13,6 @@ def chunk_document(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
         separators=["\n\n", "\n", " ", ""],
-        add_start_index=True,
         strip_whitespace=False,
     )
 
@@ -33,7 +32,6 @@ def chunk_document(
                 metadata={
                     **split_document.metadata,
                     "chunk_index": index,
-                    "start_index": split_document.metadata["start_index"],
                 },
             )
         )
