@@ -1,5 +1,8 @@
 from src.models import Document, Chunk, RetrievalResult, Citation, Answer
 
+import pytest
+from pydantic import ValidationError
+
 
 def test_document_defaults():
     doc = Document(
@@ -45,3 +48,7 @@ def test_answer_defaults_to_empty_citations():
         content="RAG retrieves relevant information.",
     )
     assert answer.citations == []
+
+def test_document_rejects_missing_required_fields():
+    with pytest.raises(ValidationError):
+        Document(id="doc-1", source="notes.md")
