@@ -3,6 +3,10 @@ from src.models import Document, Chunk, RetrievalResult, Citation, Answer
 import pytest
 from pydantic import ValidationError
 
+from pathlib import Path
+
+from src.ingestion.text_loader import load_text_file
+
 
 def test_document_defaults():
     doc = Document(
