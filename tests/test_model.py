@@ -118,12 +118,28 @@ def test_chunker_preserves_overlap():
         content=" ".join(f"word{i}" for i in range(300)),
         source="overlap.txt",
     )
-
     chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
-
     assert len(chunks) > 1
 
     first_end = chunks[0].metadata["start_index"] + len(chunks[0].content)
     second_start = chunks[1].metadata["start_index"]
-
     assert second_start < first_end
+
+
+def test_chunker_preserves_metadata():
+    doc = Document(
+        id="metadata-doc",
+        content="RAG retrieves relevant information. " * 200,
+        source="metadata.txt",
+        metadata={"file_type": ".txt"},
+    )
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
+
+    for index, chunk in enumerate(chunks):
+        assert chunk.metadata["source"] == doc.source
+        assert chunk.metadata["file_type"] == ".txt"
+        assert chunk.metadata["chunk_index"] == index
+        assert isinstance(chunk.metadata["start_index"], int)
+        assert chunk.metadata["start_index"] >= 0
