@@ -149,6 +149,12 @@ def test_chunker_preserves_metadata():
         assert chunk.metadata["source"] == doc.source
         assert chunk.metadata["file_type"] == ".txt"
         assert chunk.metadata["chunk_index"] == index
+        assert (
+    doc.content[
+        chunk.metadata["start_index"]:
+        chunk.metadata["start_index"] + len(chunk.content)
+    ] == chunk.content
+)
 
 
 
@@ -187,6 +193,21 @@ def test_chunker_offsets_match_original_text():
 
     assert len(chunks) > 1
 
+    for chunk in chunks:
+        start = chunk.metadata["start_index"]
+        assert start >= 0
+        assert content[start : start + len(chunk.content)] == chunk.content
+
+def test_chunker_offsets_with_repeated_text():
+    content = "RAG retrieves relevant information. " * 200
+    doc = Document(
+        id="repeated-doc",
+        content=content,
+        source="repeated.txt",
+    )
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
     for chunk in chunks:
         start = chunk.metadata["start_index"]
         assert start >= 0
