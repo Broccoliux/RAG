@@ -1,6 +1,7 @@
 from typing import Any
 
 from pydantic import BaseModel, Field
+
 class Document(BaseModel):
     id: str
     content: str
@@ -22,7 +23,6 @@ class Citation(BaseModel):
     source: str
     chunk_id: str
     page: int | None = None
-
 
 
 class Answer(BaseModel):
