@@ -6,3 +6,7 @@ def test_document_model():
         content=" Hello RAG",
         source="notes.md",
     )
+    assert doc.metadata == {}
+
+
+def test_chunk_links_to_document():
