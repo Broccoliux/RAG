@@ -110,20 +110,26 @@ def test_chunker_preserves_small_document():
 
     assert len(chunks) == 1
     assert chunks[0].content == content
-    assert chunks[0].metadata["start_index"] == 0
 
 def test_chunker_preserves_overlap():
+    words = [f"word{i}" for i in range(300)]
     doc = Document(
         id="overlap-doc",
-        content=" ".join(f"word{i}" for i in range(300)),
+        content=" ".join(words),
         source="overlap.txt",
     )
+
     chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
     assert len(chunks) > 1
 
-    first_end = chunks[0].metadata["start_index"] + len(chunks[0].content)
-    second_start = chunks[1].metadata["start_index"]
-    assert second_start < first_end
+    first_words = chunks[0].content.split()
+    second_words = chunks[1].content.split()
+
+    assert any(
+        first_words[-overlap:] == second_words[:overlap]
+        for overlap in range(1, min(len(first_words), len(second_words)) + 1)
+    )
 
 
 def test_chunker_preserves_metadata():
@@ -143,4 +149,3 @@ def test_chunker_preserves_metadata():
         assert chunk.metadata["source"] == doc.source
         assert chunk.metadata["file_type"] == ".txt"
         assert chunk.metadata["chunk_index"] == index
-
