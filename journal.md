@@ -1,4 +1,4 @@
-i have started building the RAG, i am learing while
+i have started building the RAG, also learning with it
 
 made the 5 basic model now adding more RAG thimgs iit.
 
