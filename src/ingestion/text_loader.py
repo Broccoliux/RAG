@@ -8,6 +8,9 @@ def load_text_file(file_path: str) -> Document:
 
     content = path.read_text(encoding="utf-8")
 
+    if not content.strip():
+      raise ValueError(f"File is empty: {path}")
+
     return Document(
         id=path.stem,
         content=content,
