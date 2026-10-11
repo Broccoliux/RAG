@@ -74,3 +74,10 @@ def test_text_loader_rejects_missing_file(tmp_path):
 
     with pytest.raises(FileNotFoundError):
         load_text_file(str(missing_file))
+
+def test_text_loader_rejects_empty_file(tmp_path):
+    file_path = tmp_path / "empty.txt"
+    file_path.write_text("   \n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="File is empty"):
+        load_text_file(str(file_path))
