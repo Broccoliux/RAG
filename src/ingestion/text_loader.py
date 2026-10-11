@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import hashlib
 from src.models import Document
 
 
@@ -12,7 +12,7 @@ def load_text_file(file_path: str) -> Document:
       raise ValueError(f"File is empty: {path}")
 
     return Document(
-        id=path.stem,
+        id=hashlib.sha256(str(path.resolve()).encode("utf-8")).hexdigest(),
         content=content,
         source=path.name,
         metadata={"file_type": path.suffix.lower()},
