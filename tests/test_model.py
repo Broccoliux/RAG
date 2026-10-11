@@ -56,3 +56,21 @@ def test_answer_defaults_to_empty_citations():
 def test_document_rejects_missing_required_fields():
     with pytest.raises(ValidationError):
         Document(id="doc-1", source="notes.md")
+
+
+def test_text_loader_reads_file(tmp_path):
+    file_path = tmp_path / "example.txt"
+    file_path.write_text("Hello RAG", encoding="utf-8")
+
+    doc = load_text_file(str(file_path))
+
+    assert doc.content == "Hello RAG"
+    assert doc.source == "example.txt"
+    assert doc.metadata["file_type"] == ".txt"
+
+
+def test_text_loader_rejects_missing_file(tmp_path):
+    missing_file = tmp_path / "missing.txt"
+
+    with pytest.raises(FileNotFoundError):
+        load_text_file(str(missing_file))
