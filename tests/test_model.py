@@ -1,5 +1,5 @@
 from src.models import Document, Chunk, RetrievalResult, Citation, Answer
-
+from src.chunking import chunk_document
 import pytest
 from pydantic import ValidationError
 
@@ -81,3 +81,49 @@ def test_text_loader_rejects_empty_file(tmp_path):
 
     with pytest.raises(ValueError, match="File is empty"):
         load_text_file(str(file_path))
+
+def test_chunker_splits_large_document():
+    doc = Document(
+        id="test-doc",
+        content="RAG retrieves relevant information. " * 200,
+        source="test.txt",
+    )
+
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
+    assert all(chunk.document_id == doc.id for chunk in chunks)
+    assert all(chunk.content for chunk in chunks)
+    assert chunks[0].id == "test-doc-chunk-0"
+    assert chunks[1].id == "test-doc-chunk-1"
+
+
+def test_chunker_preserves_small_document():
+    content = "RAG retrieves relevant information.\n"
+    doc = Document(
+        id="small-doc",
+        content=content,
+        source="small.txt",
+    )
+
+    chunks = chunk_document(doc)
+
+    assert len(chunks) == 1
+    assert chunks[0].content == content
+    assert chunks[0].metadata["start_index"] == 0
+
+def test_chunker_preserves_overlap():
+    doc = Document(
+        id="overlap-doc",
+        content=" ".join(f"word{i}" for i in range(300)),
+        source="overlap.txt",
+    )
+
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
+
+    first_end = chunks[0].metadata["start_index"] + len(chunks[0].content)
+    second_start = chunks[1].metadata["start_index"]
+
+    assert second_start < first_end
