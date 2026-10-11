@@ -129,7 +129,9 @@ def test_chunker_preserves_overlap():
 def test_chunker_preserves_metadata():
     doc = Document(
         id="metadata-doc",
-        content="RAG retrieves relevant information. " * 200,
+        content=" ".join(
+        f"unique_word_{i}" for i in range(2000)
+        ),
         source="metadata.txt",
         metadata={"file_type": ".txt"},
     )
