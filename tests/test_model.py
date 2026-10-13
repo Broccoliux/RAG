@@ -2,9 +2,8 @@ from src.models import Document, Chunk, RetrievalResult, Citation, Answer
 from src.chunking import chunk_document
 import pytest
 from pydantic import ValidationError
-
+import tiktoken
 from pathlib import Path
-
 from src.ingestion.text_loader import load_text_file
 
 
@@ -212,3 +211,17 @@ def test_chunker_offsets_with_repeated_text():
         start = chunk.metadata["start_index"]
         assert start >= 0
         assert content[start : start + len(chunk.content)] == chunk.content
+
+def test_chunker_respects_token_limit():
+    encoding = tiktoken.get_encoding("cl100k_base")
+    doc = Document(
+        id="token-limit-doc",
+        content=" ".join(f"unique_word_{i}" for i in range(2000)),
+        source="tokens.txt",
+    )
+
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
+    assert all(len(encoding.encode(chunk.content)) <= 100 for chunk in chunks)
+
