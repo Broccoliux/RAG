@@ -225,3 +225,21 @@ def test_chunker_respects_token_limit():
     assert len(chunks) > 1
     assert all(len(encoding.encode(chunk.content)) <= 100 for chunk in chunks)
 
+def test_chunker_overlap_does_not_exceed_configured_limit():
+    encoding = tiktoken.get_encoding("cl100k_base")
+    doc = Document(
+        id="overlap-limit-doc",
+        content=" ".join(f"unique_word_{i}" for i in range(500)),
+        source="overlap.txt",
+    )
+
+    chunks = chunk_document(doc, chunk_size=100, chunk_overlap=20)
+
+    assert len(chunks) > 1
+
+    for previous, current in zip(chunks, chunks[1:]):
+        previous_end = previous.metadata["start_index"] + len(previous.content)
+        current_start = current.metadata["start_index"]
+
+        overlap_text = doc.content[current_start:previous_end]
+        assert len(encoding.encode(overlap_text)) <= 20
