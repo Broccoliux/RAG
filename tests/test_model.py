@@ -243,3 +243,12 @@ def test_chunker_overlap_does_not_exceed_configured_limit():
 
         overlap_text = doc.content[current_start:previous_end]
         assert len(encoding.encode(overlap_text)) <= 20
+
+def test_chunker_handles_non_ascii_characters():
+    content  = Document(
+        id="unicode-doc",
+        content="Café résumé 日本語 مرحبا 🚀 " * 100,
+        source="unicode.txt",
+    )
+
+    chunks = chunk_document(document, chunk_size=50)
