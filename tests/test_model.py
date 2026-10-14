@@ -244,11 +244,49 @@ def test_chunker_overlap_does_not_exceed_configured_limit():
         overlap_text = doc.content[current_start:previous_end]
         assert len(encoding.encode(overlap_text)) <= 20
 
-def test_chunker_handles_non_ascii_characters():
-    content  = Document(
+
+
+
+def test_chunker_handles_unicode():
+    document = Document(
         id="unicode-doc",
         content="Café résumé 日本語 مرحبا 🚀 " * 100,
         source="unicode.txt",
     )
 
-    chunks = chunk_document(document, chunk_size=50)
+    chunks = chunk_document(document, chunk_size=50, chunk_overlap=10)
+
+    assert chunks
+    assert "".join(
+        chunk.content for chunk in chunks
+    )  # every chunk contains text.
+
+    for chunk in chunks:
+        start = chunk.metadata["start_index"]
+        assert document.content[start : start + len(chunk.content)] == chunk.content
+
+
+def test_chunker_handles_empty_document():
+    document = Document(
+        id="empty-doc",
+        content="",
+        source="empty.txt",
+    )
+
+    assert chunk_document(document) == []
+
+
+def test_chunker_handles_long_unbroken_string():
+    document = Document(
+        id="long-doc",
+        content="a" * 10_000,
+        source="long.txt",
+    )
+
+    chunks = chunk_document(document, chunk_size=50, chunk_overlap=10)
+
+    assert len(chunks) > 1
+
+    for chunk in chunks:
+        start = chunk.metadata["start_index"]
+        assert document.content[start : start + len(chunk.content)] == chunk.content
