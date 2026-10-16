@@ -292,5 +292,35 @@ def test_chunker_handles_long_unbroken_string():
         assert document.content[start : start + len(chunk.content)] == chunk.content
 
 
+
+
 def test_chunker_respects_token_limit_for_edge_cases():
-  encoding = tiktoken.get_encoding("cl100k_base")
+    encoding = tiktoken.get_encoding("cl100k_base")
+
+    documents = [
+        Document(
+            id="unicode-doc",
+            content="Café 日本語 مرحبا 🚀 " * 100,
+            source="unicode.txt",
+        ),
+        Document(
+            id="long-doc",
+            content="a" * 10_000,
+            source="long.txt",
+        ),
+    ]
+
+    for document in documents:
+        chunks = chunk_document(
+            document,
+            chunk_size=50,
+            chunk_overlap=10,
+        )
+
+        assert chunks
+
+        for chunk in chunks:
+            token_count = len(encoding.encode(chunk.content))
+            assert token_count <= 50, (
+                f"Chunk has {token_count} tokens; expected at most 50"
+            )
