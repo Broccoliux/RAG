@@ -290,3 +290,7 @@ def test_chunker_handles_long_unbroken_string():
     for chunk in chunks:
         start = chunk.metadata["start_index"]
         assert document.content[start : start + len(chunk.content)] == chunk.content
+
+
+def test_chunker_respects_token_limit_for_edge_cases():
+  encoding = tiktoken.get_encoding("cl100k_base")
