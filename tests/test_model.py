@@ -327,7 +327,33 @@ def test_chunker_respects_token_limit_for_edge_cases():
 
 
 
+
 def test_chunker_offsets_are_ordered_and_match_source():
     content = (
-        ""
+        "Repeated passage alpha. " * 20
+        + "Unique ending passage omega."
     )
+
+    document = Document(
+        id="offset-check",
+        content=content,
+        source="offsets.txt",
+    )
+
+    chunks = chunk_document(
+        document,
+        chunk_size=20,
+        chunk_overlap=5,
+    )
+
+    assert len(chunks) > 1
+
+    previous_start = -1
+
+    for chunk in chunks:
+        start = chunk.metadata["start_index"]
+
+        assert start > previous_start
+        assert content[start : start + len(chunk.content)] == chunk.content
+
+        previous_start = start
