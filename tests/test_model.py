@@ -324,3 +324,10 @@ def test_chunker_respects_token_limit_for_edge_cases():
             assert token_count <= 50, (
                 f"Chunk has {token_count} tokens; expected at most 50"
             )
+
+
+
+def test_chunker_offsets_are_ordered_and_match_source():
+    content = (
+        ""
+    )
