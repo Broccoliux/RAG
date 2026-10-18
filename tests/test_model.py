@@ -357,3 +357,28 @@ def test_chunker_offsets_are_ordered_and_match_source():
         assert content[start : start + len(chunk.content)] == chunk.content
 
         previous_start = start
+
+
+
+def test_chunker_offsets_match_source_with_overlap():
+    content = "alpha beta gamma delta " * 100
+
+    document = Document(
+        id="overlap-doc",
+        content=content,
+        source="overlap.txt",
+    )
+
+    chunks = chunk_document(
+        document,
+        chunk_size=20,
+        chunk_overlap=5,
+    )
+
+    assert len(chunks) > 1
+
+    for chunk in chunks:
+        start = chunk.metadata["start_index"]
+        end = start + len(chunk.content)
+
+        assert content[start:end] == chunk.content
