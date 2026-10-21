@@ -12,6 +12,3 @@ def test_embad_texts_returns_vectors():
     ]
 
 
-    with patch(
-        "src.embeddings.SentenceTransformer",
-        return_value=fake_model,
