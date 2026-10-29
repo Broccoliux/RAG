@@ -39,4 +39,24 @@ class InMemoryVectorStore:
         self._chunks.extend(chunks)
 
 
-        
+          def search(
+        self,
+        query_embedding: list[float],
+        top_k: int = 5,
+    ) -> list[RetrievalResult]:
+        if top_k <= 0:
+            raise ValueError("top_k must be greater than 0")
+
+        if not self._chunks or self._embeddings is None:
+            return []
+
+        query = np.asarray(query_embedding, dtype=np.float32)
+
+        if query.ndim != 1:
+            raise ValueError("Query embedding must be a 1D vector")
+
+        if query.shape[0] != self._embeddings.shape[1]:
+            raise ValueError("Query and stored embedding dimensions must match")
+
+        if not np.isfinite(query).all():
+            raise ValueError("Query embedding must contain only finite values")
