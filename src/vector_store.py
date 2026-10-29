@@ -78,4 +78,14 @@ query_norm = np.linalg.norm(query)
             scores, len(scores) - result_count
         )[-result_count:]
 
-        
+          ranked_indices = candidate_indices[
+            np.argsort(scores[candidate_indices])[::-1]
+        ]
+
+        return [
+            RetrievalResult(
+                chunk=self._chunks[index],
+                score=float(scores[index]),
+            )
+            for index in ranked_indices
+        ]
