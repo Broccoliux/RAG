@@ -8,14 +8,14 @@ class InMemoryVectorStore:
         self._chunks: list[Chunk] = []
         self._embeddings: np.ndarray | None = None
 
-            def add(self, chunks: list[Chunk], embeddings: list[list[float]]) -> None:
+    def add(self, chunks: list[Chunk], embeddings: list[list[float]]) -> None:
         if len(chunks) != len(embeddings):
             raise ValueError("Each chunk must have exactly one embedding")
 
         if not chunks:
             return
 
- new_embeddings = np.asarray(embeddings, dtype=np.float32)
+        new_embeddings = np.asarray(embeddings, dtype=np.float32)
 
         if new_embeddings.ndim != 2:
             raise ValueError("Embeddings must be a 2D array")
@@ -38,8 +38,7 @@ class InMemoryVectorStore:
 
         self._chunks.extend(chunks)
 
-
-          def search(
+    def search(
         self,
         query_embedding: list[float],
         top_k: int = 5,
@@ -61,7 +60,7 @@ class InMemoryVectorStore:
         if not np.isfinite(query).all():
             raise ValueError("Query embedding must contain only finite values")
 
-query_norm = np.linalg.norm(query)
+        query_norm = np.linalg.norm(query)
 
         if query_norm == 0:
             raise ValueError("Query embedding cannot be a zero vector")
@@ -78,7 +77,7 @@ query_norm = np.linalg.norm(query)
             scores, len(scores) - result_count
         )[-result_count:]
 
-          ranked_indices = candidate_indices[
+        ranked_indices = candidate_indices[
             np.argsort(scores[candidate_indices])[::-1]
         ]
 
