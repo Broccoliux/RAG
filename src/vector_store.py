@@ -60,3 +60,22 @@ class InMemoryVectorStore:
 
         if not np.isfinite(query).all():
             raise ValueError("Query embedding must contain only finite values")
+
+query_norm = np.linalg.norm(query)
+
+        if query_norm == 0:
+            raise ValueError("Query embedding cannot be a zero vector")
+
+        query = query / query_norm
+
+        stored_norms = np.linalg.norm(self._embeddings, axis=1)
+        normalized_embeddings = self._embeddings / stored_norms[:, None]
+
+        scores = normalized_embeddings @ query
+
+        result_count = min(top_k, len(self._chunks))
+        candidate_indices = np.argpartition(
+            scores, len(scores) - result_count
+        )[-result_count:]
+
+        
